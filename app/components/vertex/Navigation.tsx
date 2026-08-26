@@ -10,76 +10,154 @@ import { Icon } from "./Icon";
 
 interface NavbarProps {
   className?: string;
+  activeLink?: "courses" | "my-learning" | "none";
+  showUser?: boolean;
+  avatarSrc?: string;
+  style?: React.CSSProperties;
 }
 
-export function Navbar({ className = "" }: NavbarProps) {
+export function Navbar({
+  className = "",
+  activeLink = "courses",
+  showUser = false,
+  avatarSrc,
+  style,
+}: NavbarProps) {
   return (
-    <nav
+    <header
       className={className}
       style={{
         display: "flex",
         alignItems: "center",
-        gap: "2rem",
+        justifyContent: "space-between",
+        width: "100%",
         fontFamily: "var(--font-body)",
         fontSize: "0.875rem",
         fontWeight: 500,
+        ...style,
       }}
     >
-      {/* Logo */}
-      <span
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          gap: "0.375rem",
-          fontWeight: 700,
-          fontSize: "1.125rem",
-          color: "var(--color-neutral-900)",
-        }}
-      >
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path
-            d="M12 2L3 7v10l9 5 9-5V7l-9-5z"
-            fill="var(--color-primary-500)"
-          />
-          <path
-            d="M12 2L3 7l9 5 9-5-9-5z"
-            fill="var(--color-primary-400)"
-          />
-          <path
-            d="M12 12l-9-5v10l9 5V12z"
-            fill="var(--color-primary-500)"
-          />
-          <path
-            d="M12 12l9-5v10l-9 5V12z"
-            fill="var(--color-primary-400)"
-            opacity="0.8"
-          />
-        </svg>
-        Vertex
-      </span>
+      <div style={{ display: "flex", alignItems: "center", gap: "2.5rem" }}>
+        {/* Logo */}
+        <a
+          href="/"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "0.5rem",
+            fontWeight: 700,
+            fontSize: "1.125rem",
+            color: "var(--color-neutral-900)",
+            textDecoration: "none",
+          }}
+        >
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path
+              d="M12 2L3 7v10l9 5 9-5V7l-9-5z"
+              fill="var(--color-primary-500)"
+            />
+            <path
+              d="M12 2L3 7l9 5 9-5-9-5z"
+              fill="var(--color-primary-400)"
+            />
+            <path
+              d="M12 12l-9-5v10l9 5V12z"
+              fill="var(--color-primary-500)"
+            />
+            <path
+              d="M12 12l9-5v10l-9 5V12z"
+              fill="var(--color-primary-400)"
+              opacity="0.8"
+            />
+          </svg>
+          <span>Vertex</span>
+        </a>
 
-      {/* Links */}
-      <a
-        href="#"
-        style={{
-          color: "var(--color-primary-500)",
-          textDecoration: "none",
-          borderBottom: "2px solid var(--color-primary-500)",
-          paddingBottom: "2px",
-        }}
-      >
-        Courses
-      </a>
-      <a
-        href="#"
-        style={{
-          color: "var(--color-neutral-500)",
-          textDecoration: "none",
-        }}
-      >
-        My Learning
-      </a>
-    </nav>
+        {/* Links */}
+        <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
+          <a
+            href="/courses"
+            style={{
+              color: activeLink === "courses" ? "var(--color-neutral-900)" : "var(--color-neutral-700)",
+              fontWeight: activeLink === "courses" ? 500 : 400,
+              textDecoration: "none",
+              transition: "color 150ms ease",
+            }}
+          >
+            Courses
+          </a>
+          <a
+            href="/my-learning"
+            style={{
+              color: activeLink === "my-learning" ? "var(--color-neutral-900)" : "var(--color-neutral-700)",
+              fontWeight: activeLink === "my-learning" ? 500 : 400,
+              textDecoration: "none",
+              transition: "color 150ms ease",
+            }}
+          >
+            My Learning
+          </a>
+        </div>
+      </div>
+
+      {/* Right User actions */}
+      {showUser && (
+        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+          <button
+            type="button"
+            aria-label="Notifications"
+            style={{
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+              padding: "0.375rem",
+              borderRadius: "8px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "var(--color-neutral-700)",
+              transition: "background-color 150ms ease",
+            }}
+          >
+            <Icon name="bell" size={20} color="var(--color-neutral-700)" />
+          </button>
+          
+          <div
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: "50%",
+              overflow: "hidden",
+              border: "1.5px solid var(--color-neutral-200)",
+              backgroundColor: "var(--color-neutral-100)",
+              flexShrink: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {avatarSrc ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={avatarSrc}
+                alt="User Avatar"
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              />
+            ) : (
+              <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+                <circle cx="18" cy="18" r="18" fill="#E2E8F0" />
+                {/* Stylized woman portrait avatar matching mockup */}
+                <circle cx="18" cy="14" r="6" fill="#A0AEC0" />
+                <path
+                  d="M8 32c0-5.523 4.477-10 10-10s10 4.477 10 10"
+                  fill="#718096"
+                />
+              </svg>
+            )}
+          </div>
+        </div>
+      )}
+    </header>
   );
 }
 

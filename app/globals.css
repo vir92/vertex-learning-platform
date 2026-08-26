@@ -190,3 +190,50 @@ body {
   line-height: var(--leading-small);
   font-weight: 400;
 }
+
+/* ---- Page Background & Interactive Utilities ---- */
+.vertex-pattern-bg {
+  background-color: #FAF9F6;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(215, 205, 195, 0.25) 0,
+    rgba(215, 205, 195, 0.25) 1px,
+    transparent 0,
+    transparent 10px
+  );
+}
+
+.vertex-card {
+  transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 200ms cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 200ms ease;
+}
+
+.vertex-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px -4px rgba(15, 23, 42, 0.08), 0 4px 8px -2px rgba(15, 23, 42, 0.04);
+  border-color: var(--color-neutral-300);
+}
+
+.vertex-search-bar {
+  transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+}
+
+.vertex-search-bar:focus-within {
+  border-color: var(--color-primary-400) !important;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15), 0 8px 24px -4px rgba(15, 23, 42, 0.06) !important;
+}
+
+.vertex-btn-primary {
+  transition: transform 150ms ease, box-shadow 150ms ease, filter 150ms ease;
+}
+
+.vertex-btn-primary:hover {
+  filter: brightness(1.05);
+  box-shadow: 0 6px 20px rgba(234, 88, 12, 0.4) !important;
+  transform: translateY(-1px);
+}
+
+.vertex-btn-primary:active {
+  transform: translateY(0);
+}
