@@ -1,5 +1,13 @@
+"use client";
+
 import React from "react";
 import { Icon } from "./Icon";
+import {
+  SignInButton,
+  SignUpButton,
+  UserButton,
+  Show,
+} from "@clerk/nextjs";
 
 /* =====================================================================
    Vertex Navigation Components
@@ -19,8 +27,6 @@ interface NavbarProps {
 export function Navbar({
   className = "",
   activeLink = "courses",
-  showUser = false,
-  avatarSrc,
   style,
 }: NavbarProps) {
   return (
@@ -100,63 +106,70 @@ export function Navbar({
         </div>
       </div>
 
-      {/* Right User actions */}
-      {showUser && (
-        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-          <button
-            type="button"
-            aria-label="Notifications"
-            style={{
-              background: "transparent",
-              border: "none",
-              cursor: "pointer",
-              padding: "0.375rem",
-              borderRadius: "8px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "var(--color-neutral-700)",
-              transition: "background-color 150ms ease",
+      {/* Right: Auth controls */}
+      <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+        <Show when="signed-out">
+          <SignInButton mode="modal">
+            <button
+              type="button"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                height: "38px",
+                padding: "0 1.125rem",
+                borderRadius: "9px",
+                border: "1px solid var(--color-neutral-200)",
+                backgroundColor: "transparent",
+                fontFamily: "var(--font-body)",
+                fontSize: "0.8125rem",
+                fontWeight: 500,
+                color: "var(--color-neutral-700)",
+                cursor: "pointer",
+                transition: "all 150ms ease",
+              }}
+            >
+              Sign in
+            </button>
+          </SignInButton>
+          <SignUpButton mode="modal">
+            <button
+              type="button"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                height: "38px",
+                padding: "0 1.125rem",
+                borderRadius: "9px",
+                border: "none",
+                backgroundColor: "#EA580C",
+                fontFamily: "var(--font-body)",
+                fontSize: "0.8125rem",
+                fontWeight: 500,
+                color: "#FFFFFF",
+                cursor: "pointer",
+                boxShadow: "0 2px 8px 0 rgba(234, 88, 12, 0.3)",
+                transition: "all 150ms ease",
+              }}
+            >
+              Sign up
+            </button>
+          </SignUpButton>
+        </Show>
+        <Show when="signed-in">
+          <UserButton
+            appearance={{
+              elements: {
+                avatarBox: {
+                  width: 36,
+                  height: 36,
+                },
+              },
             }}
-          >
-            <Icon name="bell" size={20} color="var(--color-neutral-700)" />
-          </button>
-          
-          <div
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: "50%",
-              overflow: "hidden",
-              border: "1.5px solid var(--color-neutral-200)",
-              backgroundColor: "var(--color-neutral-100)",
-              flexShrink: 0,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            {avatarSrc ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={avatarSrc}
-                alt="User Avatar"
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
-            ) : (
-              <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-                <circle cx="18" cy="18" r="18" fill="#E2E8F0" />
-                {/* Stylized woman portrait avatar matching mockup */}
-                <circle cx="18" cy="14" r="6" fill="#A0AEC0" />
-                <path
-                  d="M8 32c0-5.523 4.477-10 10-10s10 4.477 10 10"
-                  fill="#718096"
-                />
-              </svg>
-            )}
-          </div>
-        </div>
-      )}
+          />
+        </Show>
+      </div>
     </header>
   );
 }
