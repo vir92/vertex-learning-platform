@@ -21,3 +21,7 @@ export {
 } from "./Card";
 
 export { Navbar, Breadcrumbs, Pagination } from "./Navigation";
+
+export { BottomGraphic } from "./BottomGraphic";
+
+export { NextJsIcon, DockerIcon, TypeScriptIcon } from "./CourseIcons";

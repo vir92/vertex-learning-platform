@@ -31,6 +31,12 @@
   --color-border:     var(--color-neutral-200);
   --color-ring:       var(--color-primary-400);
 
+  /* Marketing Canvas & Frame tokens */
+  --color-canvas:        #FCFBF9;
+  --color-canvas-line:   #EFE9E1;
+  --color-canvas-gutter: #FCFBF9;
+  --color-canvas-stripe: rgba(220, 212, 202, 0.22);
+
   /* ---- 02/03  TYPOGRAPHY ---- */
   /* Font families are set by next/font/google in layout.tsx via CSS variables */
   --font-display: var(--font-playfair), Georgia, "Times New Roman", serif;
@@ -189,4 +195,58 @@ body {
   font-size: var(--text-small);
   line-height: var(--leading-small);
   font-weight: 400;
+}
+
+/* ---- Marketing Canvas & Frame Utilities ---- */
+.vertex-striped-gutters {
+  background-color: var(--color-canvas-gutter, #F7F4EE);
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--color-canvas-stripe, rgba(228, 218, 206, 0.45)) 0,
+    var(--color-canvas-stripe, rgba(228, 218, 206, 0.45)) 1px,
+    transparent 0,
+    transparent 12px
+  );
+}
+
+.vertex-page-frame {
+  background-color: var(--color-canvas, #FCFBF9);
+  border-left: 1px solid var(--color-canvas-line, #EFE9E1);
+  border-right: 1px solid var(--color-canvas-line, #EFE9E1);
+  box-shadow: 0 0 40px -10px rgba(15, 23, 42, 0.03);
+}
+
+.vertex-card {
+  transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 200ms cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 200ms ease;
+}
+
+.vertex-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px -4px rgba(15, 23, 42, 0.08), 0 4px 8px -2px rgba(15, 23, 42, 0.04);
+  border-color: var(--color-neutral-300);
+}
+
+.vertex-search-bar {
+  transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+}
+
+.vertex-search-bar:focus-within {
+  border-color: var(--color-primary-400) !important;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15), 0 8px 24px -4px rgba(15, 23, 42, 0.06) !important;
+}
+
+.vertex-btn-primary {
+  transition: transform 150ms ease, box-shadow 150ms ease, filter 150ms ease;
+}
+
+.vertex-btn-primary:hover {
+  filter: brightness(1.05);
+  box-shadow: 0 6px 20px rgba(234, 88, 12, 0.4) !important;
+  transform: translateY(-1px);
+}
+
+.vertex-btn-primary:active {
+  transform: translateY(0);
 }
