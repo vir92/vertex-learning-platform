@@ -25,6 +25,7 @@ These are the only built-in Permissions. Use them verbatim; do NOT invent shorte
 | `org:sys_domains:manage` | Add / verify / remove Verified Domains |
 | `org:sys_billing:read` | View billing info (subscription, invoices) |
 | `org:sys_billing:manage` | Manage billing (change plan, payment method) |
+| `org:sys_entconns:manage` | Manage Enterprise SSO connections |
 
 **Creator Role requirement.** The Role that Clerk assigns to a user who creates a new Organization MUST carry at minimum:
 
@@ -117,4 +118,4 @@ import { Show } from '@clerk/nextjs'
 - **`org:` prefix is mandatory** for all org-scoped permissions.
 - **Always check `isLoaded` before trusting `has` on the client.** On first render `has` can be `undefined` — use optional chaining (`has?.()`) or guard on `isLoaded`.
 - **Case-sensitive.** `org:Admin` is not `org:admin`.
-- **Role changes require session refresh.** If you change a user's role and `has()` still returns the old value, the session token is stale. `await clerk.session?.reload()` on the client, or navigate to force a new session.
+- **Role changes require session refresh.** If you change a user's role and `has()` still returns the old value, the session token is stale. Call `await user.reload()` on the client, use `await clerk.session?.getToken({ skipCache: true })`, or navigate to force a new session.

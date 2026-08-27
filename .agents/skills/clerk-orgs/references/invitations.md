@@ -62,7 +62,7 @@ await clerk.organizations.createOrganizationInvitationBulk(organizationId, [
 ])
 ```
 
-Each item accepts the same optional fields as a single `createOrganizationInvitation` call (`redirectUrl`, `publicMetadata`). The bulk endpoint is rate-limited separately at **50 requests/hour** per application instance (vs 250/hr for single create).
+Each item accepts the same optional fields as a single `createOrganizationInvitation` call (`redirectUrl`, `publicMetadata`). Each call accepts at most **10 invitations** — batches exceeding that limit must be split across multiple requests. The bulk endpoint is rate-limited separately at **50 requests/hour** per application instance (vs 250/hr for single create).
 
 ## List Invitations
 

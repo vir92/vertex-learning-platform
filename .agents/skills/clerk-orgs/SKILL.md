@@ -20,7 +20,7 @@ metadata:
 ## Quick Start
 
 1. **Enable Organizations** — via [Dashboard → Organizations settings](https://dashboard.clerk.com/last-active?path=organizations-settings) or `clerk enable orgs` (see Agent-first section). Pick `Membership required` (B2B-only) or `Membership optional` (B2C + B2B).
-2. **Create an org** — via `<OrganizationSwitcher />`, `<CreateOrganization />`, or programmatically with `clerkClient().organizations.createOrganization()`.
+2. **Create an org** — via `<OrganizationSwitcher />`, `<CreateOrganization />`, or programmatically with `(await clerkClient()).organizations.createOrganization()`.
 3. **Protect routes** — read `orgId` / `orgSlug` from `auth()` and gate with `has({ role })` or `has({ permission })`.
 4. **Manage members** — send invitations via Backend API or the built-in `<OrganizationProfile />` tab.
 5. **Cap membership** — set `maxAllowedMemberships` at org creation or pick a seat-limited Billing Plan (see `clerk-billing` skill).
@@ -164,7 +164,7 @@ if (!orgId) {
 
 Route-per-org pattern works in any framework supporting file-based dynamic routes. Next.js example:
 
-```
+```text
 app/orgs/[slug]/page.tsx
 app/orgs/[slug]/settings/page.tsx
 ```
@@ -172,9 +172,10 @@ app/orgs/[slug]/settings/page.tsx
 Always verify the URL slug matches the active org slug — otherwise users can hit `/orgs/other-org/...` with a stale `orgSlug` in their session:
 
 ```typescript
-export default async function OrgPage({ params }: { params: { slug: string } }) {
+export default async function OrgPage({ params }: { params: Promise<{ slug: string }> }) {
   const { orgSlug } = await auth()
-  if (orgSlug !== params.slug) {
+  const { slug } = await params
+  if (orgSlug !== slug) {
     redirect('/dashboard')  // or whatever your "no-access" flow is
   }
   return <div>Welcome to {orgSlug}</div>
@@ -356,11 +357,11 @@ Most "org-related" failures are configuration, not code. Do not edit components 
 |---|---|---|
 | `orgId` / `orgSlug` is `undefined` for a signed-in user | Organizations not enabled for this instance, OR user has no active org (personal account) | Enable in Dashboard → Organizations; check Membership mode; surface `<OrganizationSwitcher />` |
 | `has({ permission: 'org:manage_members' })` always `false` | Using an invented permission slug | Use `org:sys_memberships:manage` (see roles-permissions.md catalog) |
-| `has({ role })` returns `false` but user looks like an admin | Session token stale after role change | Re-sign-in, or refresh the session: `await clerk.session?.reload()` |
+| `has({ role })` returns `false` but user looks like an admin | Session token stale after role change | Re-sign-in, or refresh the session: `await user.reload()` on the client, or navigate to force a new session |
 | `has({ permission })` `false` even with the role assigned | Feature not attached to active Plan (Billing gates permissions) | Dashboard → Billing → Plans → attach Feature |
 | `<OrganizationSwitcher />` doesn't show "Personal Account" | `Membership required` mode is on (the default since Aug 22, 2025) | Dashboard → Organizations settings → `Membership optional` |
 | `TaskChooseOrganization` throws "cannot render when a user doesn't have current session tasks" | Rendered outside a `choose-organization` task context | Wrap in a `choose-organization` session-task route only; don't render unconditionally |
-| `enterpriseAccounts[0].provider` is `undefined` | Accessing `provider` at the wrong nesting level | Use `user.enterpriseAccounts[0].enterpriseConnection?.provider` |
+| Connection-specific fields (`domain`, `name`) are `undefined` on `enterpriseAccounts[0]` | Accessing connection fields at the wrong nesting level | Use `user.enterpriseAccounts[0].enterpriseConnection?.domain` — `provider` and `protocol` are top-level on the account, but `domain`/`name` are on the nested connection |
 
 ## Authorization Pattern (Complete Example)
 
@@ -370,10 +371,11 @@ Server component protecting a slug-scoped admin page:
 import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 
-export default async function AdminPage({ params }: { params: { slug: string } }) {
+export default async function AdminPage({ params }: { params: Promise<{ slug: string }> }) {
   const { orgSlug, has } = await auth()
+  const { slug } = await params
 
-  if (orgSlug !== params.slug) redirect('/dashboard')
+  if (orgSlug !== slug) redirect('/dashboard')
   if (!has({ role: 'org:admin' })) redirect(`/orgs/${orgSlug}`)
 
   return <div>Admin settings for {orgSlug}</div>

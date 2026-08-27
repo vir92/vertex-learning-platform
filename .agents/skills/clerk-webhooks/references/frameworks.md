@@ -19,9 +19,8 @@ app.post('/api/webhooks', express.raw({ type: 'application/json' }), async (req,
     const evt = await verifyWebhook(req)
 
     if (evt.type === 'user.created') {
-      const { id, email_addresses, first_name, last_name } = evt.data
-      const email = email_addresses[0]?.email_address
-      console.log(`New user: ${first_name} ${last_name} (${email})`)
+      const { id, first_name, last_name } = evt.data
+      console.log(`New user: ${id} (${first_name} ${last_name})`)
     }
 
     return res.send('Webhook received')
@@ -46,9 +45,8 @@ export const POST: APIRoute = async ({ request }) => {
     })
 
     if (evt.type === 'user.created') {
-      const { id, email_addresses } = evt.data
-      const email = email_addresses[0]?.email_address
-      console.log(`New user: ${id} (${email})`)
+      const { id } = evt.data
+      console.log(`New user: ${id}`)
     }
 
     return new Response('Webhook received', { status: 200 })
@@ -110,7 +108,7 @@ export default defineEventHandler(async (event) => {
 })
 ```
 
-Prefix the env var with `NUXT_` (i.e. `NUXT_CLERK_WEBHOOK_SIGNING_SECRET`) per Nuxt runtime config rules.
+Set `CLERK_WEBHOOK_SIGNING_SECRET` in your environment. The `@clerk/nuxt/webhooks` adapter reads `CLERK_WEBHOOK_SIGNING_SECRET` automatically (no `NUXT_` prefix required unless you explicitly map it via Nuxt runtime config and pass `signingSecret` to `verifyWebhook`).
 
 When tunneling via ngrok in dev, allow the host in `nuxt.config.ts`:
 
