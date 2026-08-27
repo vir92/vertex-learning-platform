@@ -34,8 +34,8 @@
   /* Marketing Canvas & Frame tokens */
   --color-canvas:        #FCFBF9;
   --color-canvas-line:   #EFE9E1;
-  --color-canvas-gutter: #F7F4EE;
-  --color-canvas-stripe: rgba(228, 218, 206, 0.45);
+  --color-canvas-gutter: #FCFBF9;
+  --color-canvas-stripe: rgba(220, 212, 202, 0.22);
 
   /* ---- 02/03  TYPOGRAPHY ---- */
   /* Font families are set by next/font/google in layout.tsx via CSS variables */
