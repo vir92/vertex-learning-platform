@@ -31,6 +31,12 @@
   --color-border:     var(--color-neutral-200);
   --color-ring:       var(--color-primary-400);
 
+  /* Marketing Canvas & Frame tokens */
+  --color-canvas:        #FCFBF9;
+  --color-canvas-line:   #EFE9E1;
+  --color-canvas-gutter: #F7F4EE;
+  --color-canvas-stripe: rgba(228, 218, 206, 0.45);
+
   /* ---- 02/03  TYPOGRAPHY ---- */
   /* Font families are set by next/font/google in layout.tsx via CSS variables */
   --font-display: var(--font-playfair), Georgia, "Times New Roman", serif;
@@ -191,16 +197,23 @@ body {
   font-weight: 400;
 }
 
-/* ---- Page Background & Interactive Utilities ---- */
-.vertex-pattern-bg {
-  background-color: #FAF9F6;
+/* ---- Marketing Canvas & Frame Utilities ---- */
+.vertex-striped-gutters {
+  background-color: var(--color-canvas-gutter, #F7F4EE);
   background-image: repeating-linear-gradient(
     -45deg,
-    rgba(215, 205, 195, 0.25) 0,
-    rgba(215, 205, 195, 0.25) 1px,
+    var(--color-canvas-stripe, rgba(228, 218, 206, 0.45)) 0,
+    var(--color-canvas-stripe, rgba(228, 218, 206, 0.45)) 1px,
     transparent 0,
-    transparent 10px
+    transparent 12px
   );
+}
+
+.vertex-page-frame {
+  background-color: var(--color-canvas, #FCFBF9);
+  border-left: 1px solid var(--color-canvas-line, #EFE9E1);
+  border-right: 1px solid var(--color-canvas-line, #EFE9E1);
+  box-shadow: 0 0 40px -10px rgba(15, 23, 42, 0.03);
 }
 
 .vertex-card {

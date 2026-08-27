@@ -29,34 +29,41 @@ export default function Home() {
 
   return (
     <div
-      className="vertex-pattern-bg"
+      className="vertex-striped-gutters"
       style={{
         minHeight: "100vh",
         display: "flex",
         flexDirection: "column",
+        alignItems: "center",
         position: "relative",
         overflowX: "hidden",
       }}
     >
-      {/* Central Content Wrapper */}
+      {/* 1440px Framed Canvas Container */}
       <div
+        className="vertex-page-frame"
         style={{
           width: "100%",
           maxWidth: "1440px",
           margin: "0 auto",
-          padding: "1.75rem 2rem 0",
           display: "flex",
           flexDirection: "column",
           flex: 1,
         }}
       >
-        {/* ---- 01 Top Navigation Header ---- */}
-        <Navbar
-          showUser={true}
-          activeLink="courses"
-          avatarSrc="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&h=120&q=80"
-          style={{ marginBottom: "2.5rem" }}
-        />
+        {/* ---- 01 Top Navigation Header with Bottom Border ---- */}
+        <header
+          style={{
+            borderBottom: "1px solid var(--color-canvas-line, #EFE9E1)",
+            padding: "1.25rem 2.5rem",
+          }}
+        >
+          <Navbar
+            showUser={true}
+            activeLink="courses"
+            avatarSrc="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&h=120&q=80"
+          />
+        </header>
 
         {/* ---- 02 Hero Section ---- */}
         <section
@@ -65,8 +72,7 @@ export default function Home() {
             flexDirection: "column",
             alignItems: "center",
             textAlign: "center",
-            marginTop: "3rem",
-            marginBottom: "3.5rem",
+            padding: "4.25rem 2.5rem 3.5rem",
           }}
         >
           {/* Eyebrow Badge */}
@@ -207,7 +213,7 @@ export default function Home() {
         </section>
 
         {/* ---- 03 All Courses Section ---- */}
-        <section id="courses" style={{ marginTop: "1rem", marginBottom: "3.5rem" }}>
+        <section id="courses" style={{ padding: "0 2.5rem 3.5rem" }}>
           {/* Section Header */}
           <div
             style={{
@@ -298,7 +304,8 @@ export default function Home() {
             alignItems: "center",
             justifyContent: "center",
             gap: "1.5rem",
-            margin: "2rem 0 2.5rem",
+            padding: "0 2.5rem",
+            margin: "1rem 0 2.5rem",
             width: "100%",
           }}
         >
@@ -306,7 +313,7 @@ export default function Home() {
             style={{
               flex: 1,
               height: "1px",
-              backgroundColor: "var(--color-neutral-200)",
+              backgroundColor: "var(--color-canvas-line, #EFE9E1)",
               maxWidth: "340px",
             }}
           />
@@ -328,15 +335,15 @@ export default function Home() {
             style={{
               flex: 1,
               height: "1px",
-              backgroundColor: "var(--color-neutral-200)",
+              backgroundColor: "var(--color-canvas-line, #EFE9E1)",
               maxWidth: "340px",
             }}
           />
         </section>
-      </div>
 
-      {/* ---- 05 Stepped Warm Pillars Ambient Bottom Graphic ---- */}
-      <BottomGraphic />
+        {/* ---- 05 Stepped Warm Pillars Ambient Bottom Graphic ---- */}
+        <BottomGraphic />
+      </div>
     </div>
   );
 }
