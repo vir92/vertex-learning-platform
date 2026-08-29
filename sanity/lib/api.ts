@@ -26,7 +26,8 @@ import { sanityFetch } from './live'
  */
 
 export async function getCourses() {
-  return sanityFetch({ query: COURSES_QUERY, tags: ['course'] })
+  const { data } = await sanityFetch({ query: COURSES_QUERY, tags: ['course'] })
+  return data
 }
 
 export async function getCourseBySlug(slug: string) {
@@ -61,7 +62,8 @@ export async function getCoursesByCategory(categoryId: string) {
 }
 
 export async function getCategories() {
-  return sanityFetch({ query: CATEGORIES_QUERY, tags: ['category', 'course'] })
+  const { data } = await sanityFetch({ query: CATEGORIES_QUERY, tags: ['category', 'course'] })
+  return data
 }
 
 export async function getCategoryBySlug(slug: string) {
@@ -74,7 +76,8 @@ export async function getCategoryBySlug(slug: string) {
 }
 
 export async function getInstructors() {
-  return sanityFetch({ query: INSTRUCTORS_QUERY, tags: ['instructor', 'course'] })
+  const { data } = await sanityFetch({ query: INSTRUCTORS_QUERY, tags: ['instructor', 'course'] })
+  return data
 }
 
 export async function getInstructorBySlug(slug: string) {

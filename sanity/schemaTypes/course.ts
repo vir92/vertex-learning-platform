@@ -70,7 +70,7 @@ export const course = defineType({
           to: [{ type: 'instructor' }],
         }),
       ],
-      validation: (rule) => rule.min(1).error('Add at least one instructor'),
+      validation: (rule) => rule.required().min(1).error('Add at least one instructor'),
     }),
     defineField({
       name: 'difficulty',

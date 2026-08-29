@@ -747,7 +747,7 @@
                     }
                   }
                 },
-                "optional": true
+                "optional": false
               },
               "explanation": {
                 "type": "objectAttribute",
@@ -1227,7 +1227,7 @@
             }
           }
         },
-        "optional": true
+        "optional": false
       },
       "difficulty": {
         "type": "objectAttribute",

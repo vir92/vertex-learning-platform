@@ -121,7 +121,7 @@ export type Lesson = {
   videoUrl?: string;
   questions?: Array<{
     prompt: string;
-    options?: Array<{
+    options: Array<{
       text?: string;
       correct?: boolean;
       _type: "answerOption";
@@ -209,7 +209,7 @@ export type Course = {
     _type: "image";
   };
   category: CategoryReference;
-  instructors?: Array<
+  instructors: Array<
     {
       _key: string;
     } & InstructorReference
@@ -394,7 +394,7 @@ export type COURSES_QUERY_RESULT = Array<{
     slug: string;
     title: string | null;
     photoUrl: string | null;
-  }> | null;
+  }>;
   estimatedDurationMinutes: number | null;
   highlights: Array<{
     _key: string;
@@ -433,7 +433,7 @@ export type COURSE_BY_SLUG_QUERY_RESULT = {
     slug: string;
     title: string | null;
     photoUrl: string | null;
-  }> | null;
+  }>;
   estimatedDurationMinutes: number | null;
   highlights: Array<{
     _key: string;
@@ -491,7 +491,7 @@ export type COURSES_BY_INSTRUCTOR_QUERY_RESULT = Array<{
     slug: string;
     title: string | null;
     photoUrl: string | null;
-  }> | null;
+  }>;
   estimatedDurationMinutes: number | null;
   highlights: Array<{
     _key: string;
@@ -529,7 +529,7 @@ export type COURSES_BY_CATEGORY_QUERY_RESULT = Array<{
     slug: string;
     title: string | null;
     photoUrl: string | null;
-  }> | null;
+  }>;
   estimatedDurationMinutes: number | null;
   highlights: Array<{
     _key: string;
@@ -601,7 +601,7 @@ export type CATEGORY_BY_SLUG_QUERY_RESULT = {
       slug: string;
       title: string | null;
       photoUrl: string | null;
-    }> | null;
+    }>;
     estimatedDurationMinutes: number | null;
     highlights: Array<{
       _key: string;
@@ -670,7 +670,7 @@ export type INSTRUCTOR_BY_SLUG_QUERY_RESULT = {
       slug: string;
       title: string | null;
       photoUrl: string | null;
-    }> | null;
+    }>;
     estimatedDurationMinutes: number | null;
     highlights: Array<{
       _key: string;
@@ -742,7 +742,7 @@ export type LESSON_BY_SLUG_QUERY_RESULT = {
       _key: string;
       text: string | null;
       correct: boolean | null;
-    }> | null;
+    }>;
     explanation: string | null;
   }> | null;
   resources: Array<{

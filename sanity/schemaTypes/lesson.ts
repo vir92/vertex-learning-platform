@@ -137,7 +137,7 @@ export const lesson = defineType({
                   },
                 }),
               ],
-              validation: (rule) => rule.min(2).error('Provide at least two answer options'),
+              validation: (rule) => rule.required().min(2).error('Provide at least two answer options'),
             }),
             defineField({
               name: 'explanation',

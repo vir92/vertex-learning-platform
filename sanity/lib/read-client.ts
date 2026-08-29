@@ -6,7 +6,8 @@ import { client } from './client'
  * fresh, uncached reads are required.
  *
  * - `useCdn: false` guarantees fresh reads (no CDN delay)
- * - optional token enables draft/preview reads when SANITY_API_READ_TOKEN is set
+ * - `perspective: 'published'` always reads published documents, never drafts
+ * - optional token authenticates requests when SANITY_API_READ_TOKEN is set
  */
 export const readClient = client.withConfig({
   useCdn: false,
