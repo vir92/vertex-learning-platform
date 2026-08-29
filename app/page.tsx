@@ -1,31 +1,18 @@
-"use client";
-
-import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { stegaClean } from "@sanity/client/stega";
+import { getCourses } from "@/sanity/lib/api";
 import {
   Navbar,
   Icon,
   CourseCard,
   BottomGraphic,
-  NextJsIcon,
-  DockerIcon,
-  TypeScriptIcon,
 } from "@/app/components/vertex";
+import { HeroSearchBar } from "@/app/components/HeroSearchBar";
+import { formatDuration, titleCase } from "@/app/lib/format";
 
-export default function Home() {
-  const [searchQuery, setSearchQuery] = useState("");
-
-  // Listen for Cmd+K / Ctrl+K keyboard shortcut to focus search
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        const inputEl = document.getElementById("vertex-hero-search-input");
-        if (inputEl) inputEl.focus();
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+export default async function Home() {
+  const courses = await getCourses();
 
   return (
     <div
@@ -154,60 +141,7 @@ export default function Home() {
           </a>
 
           {/* Floating Search Bar */}
-          <div
-            className="vertex-search-bar"
-            style={{
-              width: "100%",
-              maxWidth: "600px",
-              height: "54px",
-              borderRadius: "14px",
-              backgroundColor: "var(--color-white, #FFFFFF)",
-              border: "1px solid var(--color-neutral-200)",
-              display: "flex",
-              alignItems: "center",
-              padding: "0 1.125rem",
-              boxShadow: "0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 2px 6px -1px rgba(15, 23, 42, 0.02)",
-            }}
-          >
-            <Icon name="search" size={20} color="#94A3B8" />
-            <input
-              id="vertex-hero-search-input"
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Ask anything about your learning..."
-              style={{
-                border: "none",
-                outline: "none",
-                backgroundColor: "transparent",
-                fontFamily: "var(--font-body)",
-                fontSize: "0.9375rem",
-                color: "var(--color-neutral-900)",
-                flex: 1,
-                paddingLeft: "0.75rem",
-                paddingRight: "0.75rem",
-              }}
-            />
-            <kbd
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "2px",
-                padding: "3px 7px",
-                borderRadius: "6px",
-                border: "1px solid var(--color-neutral-200)",
-                backgroundColor: "var(--color-neutral-50, #F8FAFC)",
-                fontFamily: "var(--font-body)",
-                fontSize: "0.8125rem",
-                color: "var(--color-neutral-500)",
-                lineHeight: 1,
-                whiteSpace: "nowrap",
-                userSelect: "none",
-              }}
-            >
-              ⌘ K
-            </kbd>
-          </div>
+          <HeroSearchBar />
         </section>
 
         {/* ---- 03 All Courses Section ---- */}
@@ -233,7 +167,7 @@ export default function Home() {
               All Courses
             </h2>
 
-            <a
+            <Link
               href="/courses"
               style={{
                 display: "inline-flex",
@@ -249,10 +183,10 @@ export default function Home() {
             >
               <span>View all courses</span>
               <Icon name="arrow-right" size={14} color="#EA580C" />
-            </a>
+            </Link>
           </div>
 
-          {/* 3 Courses Grid */}
+          {/* Courses Grid — dynamically rendered from Sanity */}
           <div
             style={{
               display: "grid",
@@ -260,38 +194,62 @@ export default function Home() {
               gap: "1.75rem",
             }}
           >
-            {/* Next.js for Production */}
-            <CourseCard
-              variant="vertical"
-              icon={<NextJsIcon size={52} />}
-              title="Next.js for Production"
-              description="Build scalable, high-performance web applications with Next.js."
-              difficulty="Intermediate"
-              duration="18h 24m"
-              modules={12}
-            />
-
-            {/* Docker Essentials */}
-            <CourseCard
-              variant="vertical"
-              icon={<DockerIcon size={52} />}
-              title="Docker Essentials"
-              description="Containerize applications and streamline your development workflow."
-              difficulty="Beginner"
-              duration="10h 12m"
-              modules={8}
-            />
-
-            {/* TypeScript Deep Dive */}
-            <CourseCard
-              variant="vertical"
-              icon={<TypeScriptIcon size={52} />}
-              title="TypeScript Deep Dive"
-              description="Go beyond the basics and write safer, more expressive code."
-              difficulty="Intermediate"
-              duration="14h 36m"
-              modules={10}
-            />
+            {courses.slice(0, 3).map((course) => {
+              const initial = course.title?.charAt(0).toUpperCase() ?? "C";
+              return (
+                <CourseCard
+                  key={course._id}
+                  variant="vertical"
+                  href={`/courses/${stegaClean(course.slug)}`}
+                  icon={
+                    course.coverImageUrl ? (
+                      <div
+                        style={{
+                          position: "relative",
+                          width: 52,
+                          height: 52,
+                          borderRadius: "14px",
+                          overflow: "hidden",
+                          flexShrink: 0,
+                        }}
+                      >
+                        <Image
+                          src={course.coverImageUrl}
+                          alt={course.coverImageAlt ?? course.title}
+                          fill
+                          sizes="52px"
+                          style={{ objectFit: "cover" }}
+                        />
+                      </div>
+                    ) : (
+                      <div
+                        style={{
+                          width: 52,
+                          height: 52,
+                          borderRadius: "14px",
+                          backgroundColor: "var(--color-neutral-900)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          flexShrink: 0,
+                          color: "#fff",
+                          fontFamily: "var(--font-body)",
+                          fontWeight: 700,
+                          fontSize: "1.25rem",
+                        }}
+                      >
+                        {initial}
+                      </div>
+                    )
+                  }
+                  title={course.title}
+                  description={course.summary ?? ""}
+                  difficulty={titleCase(stegaClean(course.level))}
+                  duration={formatDuration(course.totalDuration)}
+                  modules={course.moduleCount ?? 0}
+                />
+              );
+            })}
           </div>
         </section>
 
