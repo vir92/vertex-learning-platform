@@ -3,25 +3,7 @@ import Image from "next/image";
 import { stegaClean } from "@sanity/client/stega";
 import { getCourses } from "@/sanity/lib/api";
 import { Navbar, Icon } from "@/app/components/vertex";
-
-function formatDuration(seconds: number | null) {
-  if (!seconds) return "—";
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.round((seconds % 3600) / 60);
-  if (!hours) return `${minutes}m`;
-  return `${hours}h ${minutes}m`;
-}
-
-function titleCase(value: string) {
-  return value.replace(/\b\w/g, (letter) => letter.toUpperCase());
-}
-
-function formatStudentCount(count: number | null) {
-  if (!count) return "—";
-  return count >= 1000
-    ? `${(count / 1000).toFixed(count >= 10000 ? 0 : 1)}k`
-    : count.toLocaleString();
-}
+import { formatDuration, formatStudentCount, titleCase } from "@/app/lib/format";
 
 export default async function CoursesPage() {
   const courses = await getCourses();
@@ -155,7 +137,7 @@ export default async function CoursesPage() {
                             left: "0.75rem",
                             padding: "0.25rem 0.625rem",
                             borderRadius: "6px",
-                            backgroundColor: "#EA580C",
+                            backgroundColor: "var(--color-primary-500)",
                             color: "#fff",
                             fontSize: "0.6875rem",
                             fontWeight: 600,
@@ -185,7 +167,7 @@ export default async function CoursesPage() {
                             fontSize: "0.6875rem",
                             fontWeight: 600,
                             fontFamily: "var(--font-body)",
-                            color: "#EA580C",
+                            color: "var(--color-primary-500)",
                             letterSpacing: "0.06em",
                             textTransform: "uppercase",
                             marginBottom: "0.5rem",

@@ -9,18 +9,7 @@ import {
   BottomGraphic,
 } from "@/app/components/vertex";
 import { HeroSearchBar } from "@/app/components/HeroSearchBar";
-
-function formatDuration(seconds: number | null) {
-  if (!seconds) return "—";
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.round((seconds % 3600) / 60);
-  if (!hours) return `${minutes}m`;
-  return `${hours}h ${minutes}m`;
-}
-
-function titleCase(value: string) {
-  return value.replace(/\b\w/g, (letter) => letter.toUpperCase());
-}
+import { formatDuration, titleCase } from "@/app/lib/format";
 
 export default async function Home() {
   const courses = await getCourses();

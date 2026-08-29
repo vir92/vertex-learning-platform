@@ -589,7 +589,7 @@
   },
   "postgresql-for-developers-select-and-joins": {
     "id": "G3lJAxg1cy8",
-    "title": "Learn MySQL joins in 5 minutes!",
+    "title": "PostgreSQL SELECT and Joins",
     "channel": "Bro Code",
     "duration": 304,
     "query": "sql joins tutorial inner left outer"

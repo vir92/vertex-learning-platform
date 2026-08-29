@@ -4,8 +4,10 @@ import { useMemo, useState, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { stegaClean } from "@sanity/client/stega";
-import { Icon, Navbar, ProgressBar } from "@/app/components/vertex";
+import { Icon, Navbar } from "@/app/components/vertex";
+import { formatDuration, formatStudentCount, titleCase } from "@/app/lib/format";
 import type { getCourseBySlug } from "@/sanity/lib/api";
+import "./course-detail.css";
 
 export type CourseDetailData = NonNullable<Awaited<ReturnType<typeof getCourseBySlug>>>;
 
@@ -15,23 +17,6 @@ const outcomeIcons: Record<string, ReactNode> = {
   gauge: <GaugeIcon />,
   rocket: <RocketIcon />,
 };
-
-function formatDuration(seconds: number | null) {
-  if (!seconds) return "—";
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.round((seconds % 3600) / 60);
-  if (!hours) return `${minutes}m`;
-  return `${hours}h ${minutes}m`;
-}
-
-function formatStudentCount(count: number | null) {
-  if (!count) return "—";
-  return count >= 1000 ? `${(count / 1000).toFixed(count >= 10000 ? 0 : 1)}k` : count.toLocaleString();
-}
-
-function titleCase(value: string) {
-  return value.replace(/\b\w/g, (letter) => letter.toUpperCase());
-}
 
 export function CourseDetail({ course }: { course: CourseDetailData }) {
   const [showAll, setShowAll] = useState(false);
@@ -90,7 +75,7 @@ export function CourseDetail({ course }: { course: CourseDetailData }) {
               <div className="outcomes-grid">
                 {outcomes.map((outcome) => outcome && (
                   <article className="outcome-card" key={outcome._key}>
-                    <div className="outcome-icon">{outcomeIcons[outcome.icon ?? ""] ?? <Icon name="check" size={29} color="#e3633d" />}</div>
+                    <div className="outcome-icon">{outcomeIcons[outcome.icon ?? ""] ?? <Icon name="check" size={29} color="var(--color-primary-500)" />}</div>
                     <div><h3>{outcome.title}</h3><p>{outcome.description}</p></div>
                   </article>
                 ))}
@@ -114,7 +99,7 @@ export function CourseDetail({ course }: { course: CourseDetailData }) {
                   </summary>
                   {(module.lessons?.length ?? 0) > 0 && (
                     <ol className="lesson-list">
-                      {module.lessons?.map((lesson) => lesson && <li key={lesson._id}><Link href={`/lessons/${lesson.slug}`}>{lesson.freePreview && <Icon name="play-circle" size={16} color="#e3633d" />}{lesson.title}<span>{formatDuration(lesson.duration)}</span></Link></li>)}
+                      {module.lessons?.map((lesson) => lesson && <li key={lesson._id}><Link href={`/lessons/${lesson.slug}`}>{lesson.freePreview && <Icon name="play-circle" size={16} color="var(--color-primary-500)" />}{lesson.title}<span>{formatDuration(lesson.duration)}</span></Link></li>)}
                     </ol>
                   )}
                 </details>
@@ -123,7 +108,6 @@ export function CourseDetail({ course }: { course: CourseDetailData }) {
             {modules.length > 6 && <button className="show-modules" onClick={() => setShowAll(!showAll)}> {showAll ? "Show fewer modules" : `Show all ${moduleTotal} modules`} <Icon name="chevron-right" size={17} className={showAll ? "show-less-chevron" : ""} /></button>}
           </section>
         </main>
-        <aside className="course-progress" aria-label="Your course progress"><div><span>Your Progress</span><strong>35% complete</strong></div><ProgressBar value={35} /><a className="course-continue" href="#course-content">Continue Learning <Icon name="arrow-right" size={20} color="#fff" /></a></aside>
       </div>
     </div>
   );

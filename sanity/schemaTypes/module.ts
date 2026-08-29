@@ -35,13 +35,14 @@ export const moduleType = defineType({
   preview: {
     select: {
       title: 'title',
-      lessonCount: 'lessons.length',
+      lessons: 'lessons',
     },
-    prepare({ title, lessonCount }) {
+    prepare({ title, lessons }) {
+      const lessonCount = Array.isArray(lessons) ? lessons.length : 0
       return {
         title,
         subtitle:
-          typeof lessonCount === 'number' ? `${lessonCount} lesson${lessonCount === 1 ? '' : 's'}` : 'No lessons yet',
+          lessonCount > 0 ? `${lessonCount} lesson${lessonCount === 1 ? '' : 's'}` : 'No lessons yet',
       }
     },
   },
