@@ -21,17 +21,11 @@ export const course = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
-      name: 'subtitle',
-      title: 'Subtitle',
+      name: 'summary',
+      title: 'Summary',
       type: 'string',
       description: 'Short one-line summary shown on course cards',
-      validation: (rule) => rule.max(140).warning('Keep the subtitle to a single line'),
-    }),
-    defineField({
-      name: 'description',
-      title: 'Description',
-      type: 'text',
-      rows: 4,
+      validation: (rule) => rule.required().max(180).warning('Keep the summary to a single line'),
     }),
     defineField({
       name: 'coverImage',
@@ -54,6 +48,13 @@ export const course = defineType({
       ],
     }),
     defineField({
+      name: 'instructor',
+      title: 'Instructor',
+      type: 'reference',
+      to: [{ type: 'instructor' }],
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
       name: 'category',
       title: 'Category',
       type: 'reference',
@@ -61,20 +62,8 @@ export const course = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
-      name: 'instructors',
-      title: 'Instructors',
-      type: 'array',
-      of: [
-        defineArrayMember({
-          type: 'reference',
-          to: [{ type: 'instructor' }],
-        }),
-      ],
-      validation: (rule) => rule.required().min(1).error('Add at least one instructor'),
-    }),
-    defineField({
-      name: 'difficulty',
-      title: 'Difficulty',
+      name: 'level',
+      title: 'Level',
       type: 'string',
       options: {
         list: [
@@ -88,41 +77,42 @@ export const course = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
-      name: 'status',
-      title: 'Status',
-      type: 'string',
-      options: {
-        list: [
-          { title: 'Draft', value: 'draft' },
-          { title: 'Published', value: 'published' },
-        ],
-        layout: 'radio',
-      },
-      initialValue: 'draft',
-      validation: (rule) => rule.required(),
-    }),
-    defineField({
-      name: 'estimatedDurationMinutes',
-      title: 'Estimated duration (minutes)',
+      name: 'price',
+      title: 'Price',
       type: 'number',
-      description: 'Total watch time across all lessons',
+      description: 'One-time purchase price in USD',
       validation: (rule) => rule.min(0),
     }),
     defineField({
-      name: 'highlights',
-      title: 'Highlights',
+      name: 'popular',
+      title: 'Popular',
+      type: 'boolean',
+      description: 'Show this course in the popular courses section',
+      initialValue: false,
+    }),
+    defineField({
+      name: 'studentCount',
+      title: 'Student count',
+      type: 'number',
+      validation: (rule) => rule.min(0),
+    }),
+    defineField({
+      name: 'learningOutcomes',
+      title: 'Learning outcomes',
       type: 'array',
       of: [
         defineArrayMember({
-          type: 'object',
-          name: 'highlight',
-          title: 'Highlight',
-          fields: [
-            defineField({ name: 'label', title: 'Label', type: 'string' }),
-          ],
-          preview: {
-            select: { title: 'label' },
-          },
+          type: 'learningOutcome',
+        }),
+      ],
+    }),
+    defineField({
+      name: 'modules',
+      title: 'Modules',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'module',
         }),
       ],
     }),
@@ -130,14 +120,14 @@ export const course = defineType({
   preview: {
     select: {
       title: 'title',
-      subtitle: 'subtitle',
+      summary: 'summary',
       media: 'coverImage',
-      difficulty: 'difficulty',
-      status: 'status',
+      level: 'level',
+      popular: 'popular',
     },
-    prepare({ title, subtitle, media, difficulty, status }) {
-      const parts = [difficulty ?? '—', status ?? '—'].join(' · ')
-      return { title, subtitle: subtitle ? `${subtitle} (${parts})` : parts, media }
+    prepare({ title, summary, media, level, popular }) {
+      const parts = [level ?? '—', popular ? 'Popular' : null].filter(Boolean)
+      return { title, subtitle: summary ? `${summary} (${parts.join(' · ')})` : parts.join(' · '), media }
     },
   },
 })

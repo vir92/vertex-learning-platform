@@ -11,7 +11,6 @@ import {
   INSTRUCTOR_BY_SLUG_QUERY,
   LESSON_BY_SLUG_QUERY,
   LESSON_SLUGS_QUERY,
-  MODULES_BY_COURSE_QUERY,
 } from './queries'
 import { readClient } from './read-client'
 import { sanityFetch } from './live'
@@ -85,15 +84,6 @@ export async function getInstructorBySlug(slug: string) {
     query: INSTRUCTOR_BY_SLUG_QUERY,
     params: { slug },
     tags: ['instructor', 'course', `instructor:${slug}`],
-  })
-  return data
-}
-
-export async function getModulesByCourse(courseId: string) {
-  const { data } = await sanityFetch({
-    query: MODULES_BY_COURSE_QUERY,
-    params: { courseId },
-    tags: ['module', 'lesson'],
   })
   return data
 }

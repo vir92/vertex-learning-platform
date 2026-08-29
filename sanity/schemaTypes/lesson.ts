@@ -1,8 +1,6 @@
 import { defineArrayMember, defineField, defineType } from 'sanity'
 import { PlayIcon } from '@sanity/icons'
 
-export const LESSON_TYPES = ['video', 'text', 'quiz'] as const
-
 export const lesson = defineType({
   name: 'lesson',
   title: 'Lesson',
@@ -23,38 +21,57 @@ export const lesson = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
-      name: 'lessonType',
-      title: 'Lesson type',
-      type: 'string',
-      options: {
-        list: [
-          { title: 'Video', value: 'video' },
-          { title: 'Text', value: 'text' },
-          { title: 'Quiz', value: 'quiz' },
-        ],
-        layout: 'radio',
-      },
-      initialValue: 'video',
-      validation: (rule) => rule.required(),
+      name: 'videoUrl',
+      title: 'Video URL',
+      type: 'url',
+      description: 'Embed URL (YouTube, Vimeo, or Mux playback). Do not upload raw video files.',
+      validation: (rule) =>
+        rule.uri({ scheme: ['http', 'https'] }).error('Must be a valid http(s) URL'),
     }),
     defineField({
-      name: 'durationMinutes',
-      title: 'Duration (minutes)',
+      name: 'thumbnail',
+      title: 'Thumbnail',
+      type: 'image',
+      options: { hotspot: true },
+      fields: [
+        defineField({
+          name: 'alt',
+          title: 'Alternative text',
+          type: 'string',
+          validation: (rule) =>
+            rule.custom((alt, context) => {
+              if (!alt && (context.document as { thumbnail?: { asset?: unknown } })?.thumbnail?.asset) {
+                return 'Alternative text is required when a thumbnail is set'
+              }
+              return true
+            }),
+        }),
+      ],
+    }),
+    defineField({
+      name: 'duration',
+      title: 'Duration (seconds)',
       type: 'number',
       validation: (rule) => rule.min(0),
     }),
     defineField({
-      name: 'summary',
-      title: 'Summary',
-      type: 'text',
-      rows: 3,
-      description: 'Short summary shown in lesson lists',
+      name: 'freePreview',
+      title: 'Free preview',
+      type: 'boolean',
+      description: 'Whether this lesson can be watched without purchasing the course',
+      initialValue: false,
     }),
     defineField({
-      name: 'content',
-      title: 'Content',
+      name: 'studentCount',
+      title: 'Student count',
+      type: 'number',
+      validation: (rule) => rule.min(0),
+    }),
+    defineField({
+      name: 'notes',
+      title: 'Notes',
       type: 'array',
-      description: 'Rich lesson content, shown for text and quiz lessons',
+      description: 'Lesson notes written as rich text',
       of: [
         defineArrayMember({
           type: 'block',
@@ -75,140 +92,26 @@ export const lesson = defineType({
       ],
     }),
     defineField({
-      name: 'videoUrl',
-      title: 'Video URL',
-      type: 'url',
-      description: 'Embed URL (YouTube, Vimeo, or Mux playback). Do not upload raw video files.',
-      hidden: ({ parent }) => parent?.lessonType !== 'video',
-      validation: (rule) =>
-        rule
-          .uri({ scheme: ['http', 'https'] })
-          .custom((url, context) => {
-            const lessonType = (context.document as { lessonType?: string } | undefined)?.lessonType
-            if (lessonType === 'video' && !url) {
-              return 'Video lessons require a video URL'
-            }
-            return true
-          }),
+      name: 'keyPoints',
+      title: 'Key points',
+      type: 'array',
+      description: 'Short takeaways from this lesson',
+      of: [defineArrayMember({ type: 'string' })],
     }),
     defineField({
-      name: 'questions',
-      title: 'Quiz questions',
-      type: 'array',
-      hidden: ({ parent }) => parent?.lessonType !== 'quiz',
-      of: [
-        defineArrayMember({
-          type: 'object',
-          name: 'question',
-          title: 'Question',
-          fields: [
-            defineField({
-              name: 'prompt',
-              title: 'Prompt',
-              type: 'string',
-              validation: (rule) => rule.required(),
-            }),
-            defineField({
-              name: 'options',
-              title: 'Answer options',
-              type: 'array',
-              of: [
-                defineArrayMember({
-                  type: 'object',
-                  name: 'answerOption',
-                  title: 'Answer option',
-                  fields: [
-                    defineField({ name: 'text', title: 'Text', type: 'string' }),
-                    defineField({
-                      name: 'correct',
-                      title: 'Correct answer',
-                      type: 'boolean',
-                      initialValue: false,
-                    }),
-                  ],
-                  preview: {
-                    select: {
-                      title: 'text',
-                      correct: 'correct',
-                    },
-                    prepare({ title, correct }: { title?: string; correct?: boolean }) {
-                      return { title: correct ? `✓ ${title ?? ''}` : title ?? '' }
-                    },
-                  },
-                }),
-              ],
-              validation: (rule) => rule.required().min(2).error('Provide at least two answer options'),
-            }),
-            defineField({
-              name: 'explanation',
-              title: 'Explanation',
-              type: 'text',
-              rows: 2,
-            }),
-          ],
-          preview: {
-            select: {
-              title: 'prompt',
-              optionCount: 'options.length',
-            },
-            prepare({ title, optionCount }: { title?: string; optionCount?: number }) {
-              return { title, subtitle: `${optionCount ?? 0} options` }
-            },
-          },
-        }),
-      ],
-      validation: (rule) =>
-        rule.custom((questions, context) => {
-          const lessonType = (context.document as { lessonType?: string } | undefined)?.lessonType
-          if (lessonType === 'quiz' && (!questions || questions.length === 0)) {
-            return 'Quiz lessons need at least one question'
-          }
-          return true
-        }),
+      name: 'proTip',
+      title: 'Pro tip',
+      type: 'text',
+      rows: 2,
     }),
     defineField({
       name: 'resources',
       title: 'Resources',
       type: 'array',
-      description: 'Supplementary downloads and links',
+      description: 'Supplementary links for this lesson',
       of: [
         defineArrayMember({
-          type: 'object',
-          name: 'resource',
-          title: 'Resource',
-          fields: [
-            defineField({ name: 'label', title: 'Label', type: 'string' }),
-            defineField({
-              name: 'resourceType',
-              title: 'Type',
-              type: 'string',
-              options: {
-                list: ['link', 'file'],
-                layout: 'radio',
-              },
-              initialValue: 'link',
-            }),
-            defineField({
-              name: 'url',
-              title: 'URL',
-              type: 'url',
-              hidden: ({ parent }) => parent?.resourceType !== 'link',
-              validation: (rule) =>
-                rule.uri({ scheme: ['http', 'https'] }).error('Must be a valid http(s) URL'),
-            }),
-            defineField({
-              name: 'file',
-              title: 'File',
-              type: 'file',
-              hidden: ({ parent }) => parent?.resourceType !== 'file',
-            }),
-          ],
-          preview: {
-            select: {
-              title: 'label',
-              subtitle: 'resourceType',
-            },
-          },
+          type: 'resource',
         }),
       ],
     }),
@@ -216,16 +119,20 @@ export const lesson = defineType({
   preview: {
     select: {
       title: 'title',
-      lessonType: 'lessonType',
-      durationMinutes: 'durationMinutes',
-      media: 'content.0.asset',
+      duration: 'duration',
+      freePreview: 'freePreview',
+      media: 'thumbnail',
     },
-    prepare({ title, lessonType, durationMinutes }) {
-      const parts = [lessonType ?? 'lesson']
-      if (typeof durationMinutes === 'number') {
-        parts.push(`${durationMinutes} min`)
+    prepare({ title, duration, freePreview, media }) {
+      const parts = []
+      if (typeof duration === 'number') {
+        const minutes = Math.round(duration / 60)
+        parts.push(`${minutes} min`)
       }
-      return { title, subtitle: parts.join(' · ') }
+      if (freePreview) {
+        parts.push('Free preview')
+      }
+      return { title, subtitle: parts.join(' · '), media }
     },
   },
 })
