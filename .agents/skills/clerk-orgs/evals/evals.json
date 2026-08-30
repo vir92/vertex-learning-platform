@@ -64,7 +64,7 @@
 				"Explains that domain verification via DNS TXT record is required before SSO-signed users auto-join the org",
 				"References user.enterpriseAccounts (NOT user.samlAccounts) to access SSO session data",
 				"Uses strategy: 'enterprise_sso' (NOT 'saml')",
-				"If accessing provider metadata, reads it from user.enterpriseAccounts[i].enterpriseConnection?.provider (NOT directly from user.enterpriseAccounts[i].provider — that field does not exist on EnterpriseAccount)",
+				"If accessing provider metadata, reads it from user.enterpriseAccounts[i].provider (top-level on the account). Connection-specific fields like domain use user.enterpriseAccounts[i].enterpriseConnection?.domain",
 				"Does NOT suggest implementing SAML from scratch (Clerk handles the protocol)"
 			]
 		},

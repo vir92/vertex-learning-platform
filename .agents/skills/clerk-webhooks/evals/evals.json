@@ -40,7 +40,8 @@
         "Uses verifyWebhook from @clerk/express/webhooks (not raw svix Webhook class)",
         "Preserves the existing route path /webhooks/clerk",
         "Mentions CLERK_WEBHOOK_SIGNING_SECRET environment variable (not legacy CLERK_WEBHOOK_SECRET)",
-        "Returns 200 status on success (not just res.json)"
+        "Returns 200 status on success (not just res.json)",
+        "Ensures /webhooks/clerk is configured as public or excluded from Clerk authentication middleware so requests are not rejected with 401"
       ]
     },
     {
