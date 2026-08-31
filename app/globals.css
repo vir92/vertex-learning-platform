@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "./courses/[slug]/course-detail.css";
+@import "./lessons/[slug]/lesson-detail.css";
 
 /* ==========================================================================
    Vertex Design System — Design Tokens

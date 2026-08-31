@@ -19,6 +19,7 @@ const COURSE_CARD_PROJECTION = `
   summary,
   level,
   "coverImageUrl": coverImage.asset->url,
+  "coverImageAlt": coverImage.alt,
   "category": category->{ _id, title, "slug": slug.current },
   "instructor": instructor->{ ${INSTRUCTOR_PROJECTION} },
   price,
@@ -167,7 +168,21 @@ export const LESSON_BY_SLUG_QUERY = defineQuery(`
       _id,
       title,
       "slug": slug.current,
-      "module": modules[$slug in lessons[]->slug.current] { title, _key } [0]
+      level,
+      studentCount,
+      "coverImageUrl": coverImage.asset->url,
+      "modules": modules[] {
+        _key,
+        title,
+        summary,
+        "lessons": lessons[]-> {
+          _id,
+          title,
+          "slug": slug.current,
+          duration,
+          freePreview
+        }
+      }
     }
   }
 `)

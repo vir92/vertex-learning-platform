@@ -19,9 +19,8 @@ app.post('/api/webhooks', express.raw({ type: 'application/json' }), async (req,
     const evt = await verifyWebhook(req)
 
     if (evt.type === 'user.created') {
-      const { id, email_addresses, first_name, last_name } = evt.data
-      const email = email_addresses[0]?.email_address
-      console.log(`New user: ${first_name} ${last_name} (${email})`)
+      const { id } = evt.data
+      console.log(`New user: ${id}`)
     }
 
     return res.send('Webhook received')
@@ -110,7 +109,7 @@ export default defineEventHandler(async (event) => {
 })
 ```
 
-Prefix the env var with `NUXT_` (i.e. `NUXT_CLERK_WEBHOOK_SIGNING_SECRET`) per Nuxt runtime config rules.
+Prefix the env var with `NUXT_` (i.e. set `NUXT_CLERK_WEBHOOK_SIGNING_SECRET` in your `.env`) — per Nuxt runtime config rules this maps to `runtimeConfig.clerk.webhookSigningSecret`, which `verifyWebhook(event)` reads automatically.
 
 When tunneling via ngrok in dev, allow the host in `nuxt.config.ts`:
 
@@ -210,7 +209,7 @@ export default defineConfig({
 ## Common Patterns Across Frameworks
 
 - All `verifyWebhook` adapters return the same `WebhookEvent` discriminated union, so handler logic (`if (evt.type === ...)`) is identical.
-- All adapters read `CLERK_WEBHOOK_SIGNING_SECRET` automatically except Astro (pass `signingSecret` option).
+- All adapters read `CLERK_WEBHOOK_SIGNING_SECRET` automatically except Astro (pass `signingSecret` option) and Nuxt (reads `NUXT_CLERK_WEBHOOK_SIGNING_SECRET` via `runtimeConfig.clerk.webhookSigningSecret`).
 - All adapters require a public webhook route, exclude `/api/webhooks(.*)` from middleware protection.
 - Vite-based frameworks (Nuxt, React Router, TanStack Start) need `allowedHosts` configured when tunneling localhost via ngrok in development.
 - Express specifically needs `express.raw({ type: 'application/json' })` for the webhook route, raw body bytes are required for signature verification.

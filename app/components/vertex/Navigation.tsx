@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { Icon } from "./Icon";
 import {
   SignInButton,
@@ -45,7 +46,7 @@ export function Navbar({
     >
       <div style={{ display: "flex", alignItems: "center", gap: "2.5rem" }}>
         {/* Logo */}
-        <a
+        <Link
           href="/"
           style={{
             display: "inline-flex",
@@ -77,11 +78,11 @@ export function Navbar({
             />
           </svg>
           <span>Vertex</span>
-        </a>
+        </Link>
 
         {/* Links */}
         <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
-          <a
+          <Link
             href="/courses"
             style={{
               color: activeLink === "courses" ? "var(--color-neutral-900)" : "var(--color-neutral-700)",
@@ -91,7 +92,7 @@ export function Navbar({
             }}
           >
             Courses
-          </a>
+          </Link>
           <a
             href="/my-learning"
             style={{

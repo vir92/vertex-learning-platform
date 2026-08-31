@@ -28,15 +28,16 @@ Matcher config is the standard one from `clerk-nextjs-patterns` — nothing org-
 
 ## URL Slug Safety Invariant
 
-`createRouteMatcher(['/orgs/:slug/(.*)'])` doesn't validate that the URL slug matches the active org. A user with active org `acme` can hit `/orgs/other-org/...` and your data layer will happily reply with `acme`'s data. Always verify on each org-scoped page:
+`createRouteMatcher(['/orgs/:slug/(.*)'])` doesn't validate that the URL slug matches the active org. A user with active org `acme` can hit `/orgs/other-org/...` and your data layer will happily reply with `acme`'s data. Always verify on each org-scoped page (Next.js 15+ async params):
 
 ```typescript
 import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 
-export default async function OrgPage({ params }: { params: { slug: string } }) {
+export default async function OrgPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
   const { orgSlug, has } = await auth()
-  if (orgSlug !== params.slug) redirect('/dashboard')
+  if (orgSlug !== slug) redirect('/dashboard')
   if (!has({ role: 'org:admin' })) redirect(`/orgs/${orgSlug}`)
   return <AdminContent />
 }
