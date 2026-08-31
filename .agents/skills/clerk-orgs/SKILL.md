@@ -20,7 +20,7 @@ metadata:
 ## Quick Start
 
 1. **Enable Organizations** — via [Dashboard → Organizations settings](https://dashboard.clerk.com/last-active?path=organizations-settings) or `clerk enable orgs` (see Agent-first section). Pick `Membership required` (B2B-only) or `Membership optional` (B2C + B2B).
-2. **Create an org** — via `<OrganizationSwitcher />`, `<CreateOrganization />`, or programmatically with `clerkClient().organizations.createOrganization()`.
+2. **Create an org** — via `<OrganizationSwitcher />`, `<CreateOrganization />`, or programmatically with `clerkClient().organizations.createOrganization({ name, createdBy })` (name is required; pass `createdBy: userId` to assign the creator as admin).
 3. **Protect routes** — read `orgId` / `orgSlug` from `auth()` and gate with `has({ role })` or `has({ permission })`.
 4. **Manage members** — send invitations via Backend API or the built-in `<OrganizationProfile />` tab.
 5. **Cap membership** — set `maxAllowedMemberships` at org creation or pick a seat-limited Billing Plan (see `clerk-billing` skill).
@@ -145,6 +145,15 @@ clerk api -X POST /v1/organizations/<org_id>/invitations/<inv_id>/revoke \
 
 Examples use `@clerk/nextjs` by default. For other frameworks swap the import to `@clerk/react` (Vite/CRA), `@clerk/astro/components`, `@clerk/vue`, `@clerk/expo`, `@clerk/react-router`, or `@clerk/tanstack-react-start` — the feature-level APIs (`has()`, `orgId`, `<OrganizationSwitcher />`, `<Show>`) are identical across SDKs. Framework-specific patterns (middleware, redirects) live in `references/nextjs-patterns.md`.
 
+> **Next.js version note:** `@clerk/nextjs` v7+ requires Next.js 15.2 or later, where `params` and `searchParams` are async — always `await params` in page/route-handler examples:
+
+```typescript
+export default async function OrgPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  // ...
+}
+```
+
 ### 1. Read Organization from Auth
 
 Server-side access to active organization:
@@ -172,9 +181,10 @@ app/orgs/[slug]/settings/page.tsx
 Always verify the URL slug matches the active org slug — otherwise users can hit `/orgs/other-org/...` with a stale `orgSlug` in their session:
 
 ```typescript
-export default async function OrgPage({ params }: { params: { slug: string } }) {
+export default async function OrgPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
   const { orgSlug } = await auth()
-  if (orgSlug !== params.slug) {
+  if (orgSlug !== slug) {
     redirect('/dashboard')  // or whatever your "no-access" flow is
   }
   return <div>Welcome to {orgSlug}</div>
@@ -319,7 +329,7 @@ strategy: 'enterprise_sso'
 const clerk = await clerkClient()
 await clerk.organizations.createOrganization({
   name: 'Acme Corp',
-  createdBy: userId,
+  createdBy: userId, // creator becomes org:admin
   maxAllowedMemberships: 10,
 })
 
@@ -356,7 +366,7 @@ Most "org-related" failures are configuration, not code. Do not edit components 
 |---|---|---|
 | `orgId` / `orgSlug` is `undefined` for a signed-in user | Organizations not enabled for this instance, OR user has no active org (personal account) | Enable in Dashboard → Organizations; check Membership mode; surface `<OrganizationSwitcher />` |
 | `has({ permission: 'org:manage_members' })` always `false` | Using an invented permission slug | Use `org:sys_memberships:manage` (see roles-permissions.md catalog) |
-| `has({ role })` returns `false` but user looks like an admin | Session token stale after role change | Re-sign-in, or refresh the session: `await clerk.session?.reload()` |
+| `has({ role })` returns `false` but user looks like an admin | Session token stale after role change | Re-sign-in, or force a token refresh on the client: `await getToken({ skipCache: true })` from `useAuth()` (or `user.reload()`) |
 | `has({ permission })` `false` even with the role assigned | Feature not attached to active Plan (Billing gates permissions) | Dashboard → Billing → Plans → attach Feature |
 | `<OrganizationSwitcher />` doesn't show "Personal Account" | `Membership required` mode is on (the default since Aug 22, 2025) | Dashboard → Organizations settings → `Membership optional` |
 | `TaskChooseOrganization` throws "cannot render when a user doesn't have current session tasks" | Rendered outside a `choose-organization` task context | Wrap in a `choose-organization` session-task route only; don't render unconditionally |
@@ -370,10 +380,11 @@ Server component protecting a slug-scoped admin page:
 import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 
-export default async function AdminPage({ params }: { params: { slug: string } }) {
+export default async function AdminPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
   const { orgSlug, has } = await auth()
 
-  if (orgSlug !== params.slug) redirect('/dashboard')
+  if (orgSlug !== slug) redirect('/dashboard')
   if (!has({ role: 'org:admin' })) redirect(`/orgs/${orgSlug}`)
 
   return <div>Admin settings for {orgSlug}</div>

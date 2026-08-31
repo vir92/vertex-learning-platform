@@ -117,4 +117,20 @@ import { Show } from '@clerk/nextjs'
 - **`org:` prefix is mandatory** for all org-scoped permissions.
 - **Always check `isLoaded` before trusting `has` on the client.** On first render `has` can be `undefined` — use optional chaining (`has?.()`) or guard on `isLoaded`.
 - **Case-sensitive.** `org:Admin` is not `org:admin`.
-- **Role changes require session refresh.** If you change a user's role and `has()` still returns the old value, the session token is stale. `await clerk.session?.reload()` on the client, or navigate to force a new session.
+- **Role changes require session refresh.** If you change a user's role and `has()` still returns the old value, the session token is stale. Clerk refreshes session tokens every 60 seconds; to force a refresh immediately on the client, get a fresh token via `getToken({ skipCache: true })` from `useAuth()` (or `user.reload()`), or navigate to force a new session:
+
+```tsx
+'use client'
+import { useAuth } from '@clerk/nextjs'
+
+export function RefreshSessionButton() {
+  const { getToken } = useAuth()
+
+  async function refreshSession() {
+    // Forces Clerk to mint a new session token with current role/permission claims
+    await getToken({ skipCache: true })
+  }
+
+  return <button onClick={refreshSession}>Refresh session</button>
+}
+```

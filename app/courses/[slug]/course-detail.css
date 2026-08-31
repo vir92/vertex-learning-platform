@@ -16,6 +16,7 @@
 .course-summary > p { max-width: 620px; margin: 20px 0 29px; color: #68707f; font-family: var(--font-display); font-size: 21px; line-height: 1.55; }
 .course-meta { flex-wrap: wrap; gap: 18px 28px; color: #677080; font-family: var(--font-display); font-size: 15px; }
 .course-meta span { display: inline-flex; align-items: center; gap: 9px; }
+.course-actions { display: flex; align-items: center; gap: 16px; margin-top: 36px; }
 .course-continue { display: inline-flex; align-items: center; justify-content: center; gap: 22px; min-height: 56px; padding: 0 24px; border-radius: 10px; border: 0; background: var(--color-primary-500); box-shadow: 0 6px 14px rgba(227,99,61,.25); color: white; font-family: var(--font-display); font-size: 16px; text-decoration: none; transition: transform .15s ease, background .15s ease; }
 .course-continue:hover { background: #d5522d; transform: translateY(-1px); }
 .course-bookmark { display: inline-flex; align-items: center; justify-content: center; gap: 13px; min-height: 56px; padding: 0 24px; border: 1px solid #e5ddd6; border-radius: 10px; background: transparent; color: #111; cursor: pointer; font-family: var(--font-display); font-size: 16px; }
